@@ -48,15 +48,15 @@ class Channel:
         return self.__link
 
     @property
-    def channel_subscribers(self) -> str:
+    def channel_subscribers(self) -> int:
         return self.__subscribers
 
     @property
-    def channel_videoCount(self) -> str:
+    def channel_videoCount(self) -> int:
         return self.__videoCount
 
     @property
-    def channel_viewCount(self) -> str:
+    def channel_viewCount(self) -> int:
         return self.__viewCount
 
     @property
