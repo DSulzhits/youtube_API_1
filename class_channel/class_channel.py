@@ -70,7 +70,7 @@ class Channel:
     # def channel_id(self, name_inp: str) -> None:
     #     raise AttributeError("property 'channel_id' of 'Channel' object has no setter")
 
-    def make_json(self):
+    def make_json(self, channel_name):
         """Метод для создания .json файла"""
         data = {}
         data['channel_id'] = self.__id
@@ -80,7 +80,7 @@ class Channel:
         data['channel_subscribers'] = self.__subscribers
         data['channel_videoCount'] = self.__videoCount
         data['channel_viewCount'] = self.__viewCount
-        with open(f'channel_info_{self.__title}.json', 'w', encoding='UTF-8') as file:
+        with open(f'channel_info_{channel_name}.json', 'w', encoding='UTF-8') as file:
             json.dump(data, file, indent=2, ensure_ascii=False)
 
     def __repr__(self):
