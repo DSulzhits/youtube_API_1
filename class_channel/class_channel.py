@@ -13,6 +13,34 @@ class Youtube:
         yt_channel = cls.youtube.channels().list(id=channel_id, part='snippet,statistics').execute()
         return yt_channel
 
+    @classmethod
+    def get_playlist(cls, playlist_id: str):
+        channel_playlist_info = cls.youtube.playlists().list(id=playlist_id,
+                                                             part='snippet').execute()
+        return channel_playlist_info
+        # channel_playlists = []
+        # for channel_playlist in channel_playlists_info['items']:
+        #     channel_playlists.append(channel_playlist)
+        # return channel_playlists
+
+    # @classmethod
+    # def get_video_id_from_pl(cls, playlist_id: str):
+    #     video_ids = []
+    #     params = {'playlistId': playlist_id, 'part': 'contentDetails', 'maxResults': 50}
+    #     while True:
+    #         playlist_videos = cls.youtube.playlistItems().list(**params).execute()
+    #         for video in playlist_videos['items']:
+    #             video_ids.append(video['contentDetails']['videoId'])
+    #         params["pageToken"] = playlist_videos.get('nextPageToken')
+    #         if not params["pageToken"]:
+    #             break
+    #     return video_ids
+
+    @classmethod
+    def get_video(cls, video_id: str):
+        video_info = cls.youtube.videos().list(part='snippet,statistics', id=video_id).execute()
+        return video_info
+
 
 class Channel:
     """Создаем класс для работы с полученными данными от ютуба"""
@@ -28,6 +56,7 @@ class Channel:
         self.__subscribers = int(self.__info['items'][0]['statistics']['subscriberCount'])
         self.__videoCount = int(self.__info['items'][0]['statistics']['videoCount'])
         self.__viewCount = int(self.__info['items'][0]['statistics']['viewCount'])
+        self.__playlists = Youtube.get_playlist(channel_id)
 
     @property
     def channel_id(self) -> str:
@@ -63,12 +92,21 @@ class Channel:
     def channel_info(self) -> str:
         return self.__info
 
+    # @property
+    # def channel_playlists(self) -> list:
+    #     return self.__playlists
+
     # @channel_id.setter
     """Сделано для получения ошибки которая бы выглядела как в задании 
     (честно сказать не знаю насколько это обязательно поэтому закомментил"""
 
     # def channel_id(self, name_inp: str) -> None:
     #     raise AttributeError("property 'channel_id' of 'Channel' object has no setter")
+
+    # def video_ids(self, playlist_id):
+    #     playlist_videos = Youtube.get_video_id_from_pl(playlist_id)
+    #     print(len(playlist_videos))
+    #     return playlist_videos
 
     def make_json(self, channel_name):
         """Метод для создания .json файла"""
@@ -96,3 +134,29 @@ class Channel:
     def __add__(self, other) -> bool:
         """Метод для сложения количества подписчиков"""
         return self.__subscribers + other.__subscribers
+
+
+class Video:
+    """Класс для получения информации о видео по его ID"""
+
+    def __init__(self, video_id):
+        self.video_id = video_id
+        self.video_info = Youtube.get_video(video_id)
+        self.video_title = self.video_info['items'][0]['snippet']['title']
+        self.viewCount = self.video_info['items'][0]['statistics']['viewCount']
+        self.likeCount = self.video_info['items'][0]['statistics']['likeCount']
+
+    def __str__(self):
+        return f"Название {self.video_title}, просмотры {self.viewCount}, лайки {self.likeCount}"
+
+
+class PLVideo(Video):
+    """Класс для получения информации о видео и его плейлисте по их ID"""
+
+    def __init__(self, video_id, playlist_id):
+        super().__init__(video_id)
+        self.playlist_info = Youtube.get_playlist(playlist_id)
+        self.playlist_title = self.playlist_info['items'][0]['snippet']['title']
+
+    def __str__(self):
+        return f"{self.video_title}, ({self.playlist_title})"
