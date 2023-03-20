@@ -1,9 +1,10 @@
-from class_channel.class_channel import Channel
+from class_channel.class_channel import Channel, Video, PLVideo
+
 
 def main():
-    green_grass = Channel('UCbaKd4mhqd1QvfDp5EaUlHw')
-    info = green_grass.channel_info
-    print(info)
+    # green_grass = Channel('UCbaKd4mhqd1QvfDp5EaUlHw')
+    # info = green_grass.channel_info
+    # print(info)
     # print(green_grass.channel_id)
     # print(green_grass.channel_title)
     # print(green_grass.channel_description)
@@ -12,16 +13,19 @@ def main():
     # print(green_grass.channel_videoCount)
     # print(green_grass.channel_viewCount)
     # green_grass.channel_id = 'Новое название'
-    green_grass.make_json(green_grass.channel_title)
-    vdud = Channel('UCMCgOm8GZkHp8zJ6l7_hIuA')
-    vdud.make_json(vdud.channel_title)
-    print(green_grass)
-    print(vdud)
-    print(green_grass > vdud)
-    print(green_grass < vdud)
-    print(green_grass + vdud)
+    # green_grass.make_json(green_grass.channel_title)
+    # vdud = Channel('UCMCgOm8GZkHp8zJ6l7_hIuA')
+    # vdud.make_json(vdud.channel_title)
+    # print(green_grass)
+    # print(vdud)
+    # print(green_grass > vdud)
+    # print(green_grass < vdud)
+    # print(green_grass + vdud)
+    video1 = Video('YhVPQLEG4do')
+    video2 = PLVideo('YhVPQLEG4do', 'PLTw6imIlfumxmcC6uUBdbIehnNrPWCkR7')
+    print(video1)
+    print(video2)
     pass
-
 
 
 if __name__ == "__main__":
