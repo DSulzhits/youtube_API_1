@@ -20,7 +20,6 @@ def test_Channel_make_json():
     assert test_channel.make_json(f" test_{test_channel.channel_title}") is None
 
 
-
 def test_Channel_dander_methods():
     test_channel = Channel("UCbaKd4mhqd1QvfDp5EaUlHw")
     test_channel2 = Channel("UCMCgOm8GZkHp8zJ6l7_hIuA")
@@ -29,7 +28,8 @@ def test_Channel_dander_methods():
     assert test_channel.__gt__(test_channel2) is False
     assert test_channel.__add__(test_channel2) == test_channel.channel_subscribers + test_channel2.channel_subscribers
 
-def test_Video_init():
+
+def test_Video():
     video = Video('YhVPQLEG4do')
     view_count = video.viewCount
     like_count = video.likeCount
@@ -37,17 +37,20 @@ def test_Video_init():
     assert video.video_title == 'Невыносимо вредный Эдвард Нортон'
     assert video.viewCount == view_count
     assert video.likeCount == like_count
-
-def test_Video_str():
-    video = Video('YhVPQLEG4do')
     assert video.__str__() == f"Название Невыносимо вредный Эдвард Нортон, просмотры {video.viewCount}, лайки {video.likeCount}"
 
 
-def test_PLVideo_init():
+def test_PLVideo():
     pl_video = PLVideo('YhVPQLEG4do', 'PLTw6imIlfumxmcC6uUBdbIehnNrPWCkR7')
+    pl_info = pl_video.playlist_info
     assert pl_video.playlist_title == 'Взлеты и падения'
-
-def test_PLVideo_str():
-    pl_video = PLVideo('YhVPQLEG4do', 'PLTw6imIlfumxmcC6uUBdbIehnNrPWCkR7')
     assert pl_video.__str__() == 'Невыносимо вредный Эдвард Нортон, (Взлеты и падения)'
+    assert pl_video.playlist_info == pl_info
 
+
+def test_Playlist(test_playlist):
+    playlist, title, link, total_duration, best_video = test_playlist
+    assert playlist.playlist_title == title
+    assert playlist.playlist_link == link
+    assert playlist.total_duration == total_duration
+    assert playlist.show_best_video == best_video
