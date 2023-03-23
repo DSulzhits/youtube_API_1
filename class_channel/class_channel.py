@@ -1,6 +1,8 @@
 import os
 import json
 from googleapiclient.discovery import build
+import isodate as isodate
+import datetime
 
 
 class Youtube:
@@ -16,25 +18,27 @@ class Youtube:
     @classmethod
     def get_playlist(cls, playlist_id: str):
         channel_playlist_info = cls.youtube.playlists().list(id=playlist_id,
-                                                             part='snippet').execute()
+                                                             part='contentDetails, snippet').execute()
         return channel_playlist_info
-        # channel_playlists = []
-        # for channel_playlist in channel_playlists_info['items']:
-        #     channel_playlists.append(channel_playlist)
-        # return channel_playlists
 
-    # @classmethod
-    # def get_video_id_from_pl(cls, playlist_id: str):
-    #     video_ids = []
-    #     params = {'playlistId': playlist_id, 'part': 'contentDetails', 'maxResults': 50}
-    #     while True:
-    #         playlist_videos = cls.youtube.playlistItems().list(**params).execute()
-    #         for video in playlist_videos['items']:
-    #             video_ids.append(video['contentDetails']['videoId'])
-    #         params["pageToken"] = playlist_videos.get('nextPageToken')
-    #         if not params["pageToken"]:
-    #             break
-    #     return video_ids
+    @classmethod
+    def get_video_id_from_pl(cls, playlist_id: str):
+        video_ids = []
+        params = {'playlistId': playlist_id, 'part': 'contentDetails', 'maxResults': 50}
+        while True:
+            playlist_videos = cls.youtube.playlistItems().list(**params).execute()
+            for video in playlist_videos['items']:
+                video_ids.append(video['contentDetails']['videoId'])
+            params["pageToken"] = playlist_videos.get('nextPageToken')
+            if not params["pageToken"]:
+                break
+        return video_ids
+
+    @classmethod
+    def get_videos_info(cls, playlist_id: str):
+        video_ids = cls.get_video_id_from_pl(playlist_id)
+        video_info = cls.youtube.videos().list(part='contentDetails,statistics', id=','.join(video_ids)).execute()
+        return video_info
 
     @classmethod
     def get_video(cls, video_id: str):
@@ -56,7 +60,6 @@ class Channel:
         self.__subscribers = int(self.__info['items'][0]['statistics']['subscriberCount'])
         self.__videoCount = int(self.__info['items'][0]['statistics']['videoCount'])
         self.__viewCount = int(self.__info['items'][0]['statistics']['viewCount'])
-        self.__playlists = Youtube.get_playlist(channel_id)
 
     @property
     def channel_id(self) -> str:
@@ -91,10 +94,6 @@ class Channel:
     @property
     def channel_info(self) -> str:
         return self.__info
-
-    # @property
-    # def channel_playlists(self) -> list:
-    #     return self.__playlists
 
     # @channel_id.setter
     """Сделано для получения ошибки которая бы выглядела как в задании 
@@ -155,8 +154,56 @@ class PLVideo(Video):
 
     def __init__(self, video_id, playlist_id):
         super().__init__(video_id)
-        self.playlist_info = Youtube.get_playlist(playlist_id)
-        self.playlist_title = self.playlist_info['items'][0]['snippet']['title']
+        self.__playlist_info = Youtube.get_playlist(playlist_id)
+        self.__playlist_title = self.__playlist_info['items'][0]['snippet']['title']
+
+    @property
+    def playlist_info(self):
+        return self.__playlist_info
+
+    @property
+    def playlist_title(self):
+        return self.__playlist_title
 
     def __str__(self):
-        return f"{self.video_title}, ({self.playlist_title})"
+        return f"{self.video_title}, ({self.__playlist_title})"
+
+
+class Playlist:
+    """Класс для работы с плейлистом"""
+    def __init__(self, playlist_id):
+        self.__playlist_id = playlist_id
+        self.__playlist_info = Youtube.get_playlist(playlist_id)
+        self.__playlist_title = self.__playlist_info['items'][0]['snippet']['title']
+        self.__playlist_link = "https://www.youtube.com/playlist?list=" + self.__playlist_info['items'][0]['id']
+
+    @property
+    def playlist_title(self):
+        return self.__playlist_title
+
+    @property
+    def playlist_link(self):
+        return self.__playlist_link
+
+    @property
+    def total_duration(self):
+        """Метод для получения времени длительности плейлиста"""
+        videos_info = Youtube.get_videos_info(self.__playlist_id)
+        duration_total = datetime.timedelta()
+        for video in videos_info['items']:
+            duration_isodate = video['contentDetails']['duration']
+            duration = isodate.parse_duration(duration_isodate)
+            duration_total += duration
+        return duration_total
+
+    @property
+    def show_best_video(self):
+        """Метод для получения самого залайконного видео"""
+        video_ids = []
+        video_likes = []
+        videos_info = Youtube.get_videos_info(self.__playlist_id)
+        for video in videos_info['items']:
+            video_ids.append(video['id'])
+            video_likes.append(int(video['statistics']['likeCount']))
+        best_video = video_ids[video_likes.index(max(video_likes))]
+        return f"https://www.youtube.com/watch?v={best_video}"
