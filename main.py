@@ -1,4 +1,4 @@
-from class_channel.class_channel import Channel, Video, PLVideo
+from class_channel.class_channel import Channel, Video, PLVideo, Playlist
 
 
 def main():
@@ -21,10 +21,16 @@ def main():
     # print(green_grass > vdud)
     # print(green_grass < vdud)
     # print(green_grass + vdud)
-    video1 = Video('YhVPQLEG4do')
-    video2 = PLVideo('YhVPQLEG4do', 'PLTw6imIlfumxmcC6uUBdbIehnNrPWCkR7')
-    print(video1)
-    print(video2)
+    pl = Playlist('PLTw6imIlfumzfdAvVcMLYrDJz1uHEOqK4')
+    print(pl.playlist_title)
+    print(pl.playlist_link)
+    duration = pl.total_duration
+    print(duration)
+    print(type(duration))
+    print(duration.total_seconds())
+    print(pl.show_best_video)
+
+
     pass
 
 
