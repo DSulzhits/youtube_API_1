@@ -139,11 +139,20 @@ class Video:
     """Класс для получения информации о видео по его ID"""
 
     def __init__(self, video_id):
-        self.video_id = video_id
-        self.video_info = Youtube.get_video(video_id)
-        self.video_title = self.video_info['items'][0]['snippet']['title']
-        self.viewCount = self.video_info['items'][0]['statistics']['viewCount']
-        self.likeCount = self.video_info['items'][0]['statistics']['likeCount']
+        try:
+            self.video_info = Youtube.get_video(video_id)
+            self.video_id = self.video_info['items'][0]['id']
+            self.video_title = self.video_info['items'][0]['snippet']['title']
+            self.viewCount = self.video_info['items'][0]['statistics']['viewCount']
+            self.likeCount = self.video_info['items'][0]['statistics']['likeCount']
+        except IndexError:
+            self.video_id = video_id
+            self.video_info = None
+            self.video_title = None
+            self.viewCount = None
+            self.likeCount = None
+            print(f"Видеоролик с id {self.video_id} не найден/не существует")
+
 
     def __str__(self):
         return f"Название {self.video_title}, просмотры {self.viewCount}, лайки {self.likeCount}"

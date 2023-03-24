@@ -1,3 +1,5 @@
+import pytest
+
 from class_channel.class_channel import Channel, Video, PLVideo
 
 
@@ -38,6 +40,12 @@ def test_Video():
     assert video.viewCount == view_count
     assert video.likeCount == like_count
     assert video.__str__() == f"Название Невыносимо вредный Эдвард Нортон, просмотры {video.viewCount}, лайки {video.likeCount}"
+    video1 = Video('12345')
+    assert video1.video_id == '12345'
+    assert video1.video_info is None
+    assert video1.video_title is None
+    assert video1.viewCount is None
+    assert video1.likeCount is None
 
 
 def test_PLVideo():

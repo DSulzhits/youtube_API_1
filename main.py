@@ -21,14 +21,19 @@ def main():
     # print(green_grass > vdud)
     # print(green_grass < vdud)
     # print(green_grass + vdud)
-    pl = Playlist('PLTw6imIlfumzfdAvVcMLYrDJz1uHEOqK4')
-    print(pl.playlist_title)
-    print(pl.playlist_link)
-    duration = pl.total_duration
-    print(duration)
-    print(type(duration))
-    print(duration.total_seconds())
-    print(pl.show_best_video)
+    # vd = Video('YhVPQLEG4do')
+    # print(vd.video_id)
+    # pl = Playlist('PLTw6imIlfumzfdAvVcMLYrDJz1uHEOqK4')
+    # print(pl.playlist_title)
+    # print(pl.playlist_link)
+    # duration = pl.total_duration
+    # print(duration)
+    # print(type(duration))
+    # print(duration.total_seconds())
+    # print(pl.show_best_video)
+    vd_broken = Video('12345')
+    print(vd_broken.video_title)
+    print(vd_broken.likeCount)
 
 
     pass
